@@ -92,18 +92,24 @@
 - (void)launchURL:(NSString *)urlString result:(FlutterResult)result {
   NSURL *url = [NSURL URLWithString:urlString];
   UIApplication *application = [UIApplication sharedApplication];
-  [application openURL:url
-      options:@{}
-      completionHandler:^(BOOL success) {
-        if (success) {
-          result(nil);
-        } else {
-          result([FlutterError
-              errorWithCode:@"Error"
-                    message:[NSString stringWithFormat:@"Error while launching %@", url]
-                    details:nil]);
-        }
-      }];
+    
+    if ( floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_9_x_Max )
+    {
+        [application openURL:url
+                     options:@{}
+           completionHandler:^(BOOL success) {
+               if (success) {
+                   result(nil);
+               } else {
+                   result([FlutterError
+                           errorWithCode:@"Error"
+                           message:[NSString stringWithFormat:@"Error while launching %@", url]
+                           details:nil]);
+               }
+           }];
+    } else {
+        [application openURL:url];
+    }
 }
 
 - (void)launchURLInVC:(NSString *)urlString result:(FlutterResult)result {
